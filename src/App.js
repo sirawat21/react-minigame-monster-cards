@@ -58,7 +58,12 @@ class App extends Component {
       <div>
         {/* Add new monsters */}
         <div>
-          <input type="text" placeholder="Name" id="monsterName" />
+          <h1 className="app-title">
+          Monster Rolodex
+          </h1>
+          <input type="text"
+          className="monsters-search-box"
+           placeholder="Name" id="monsterName" />
           <button
             onClick={() => {
               const name = document.getElementById("monsterName").value;
