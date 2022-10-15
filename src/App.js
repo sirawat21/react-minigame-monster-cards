@@ -1,89 +1,52 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import CardList from "./components/card-list/card-list.component";
 import SearchBox from "./components/search-box/search-box.component";
-
 import "./App.css";
-class App extends Component {
-  constructor() {
-    console.log("constructor");
-    super();
-    this.state = {
-      monsters: [],
-      searchKey: "",
-    };
-  }
 
-  componentDidMount() {
-    const URL = "https://jsonplaceholder.typicode.com/users";
-    fetch(URL)
+const App = () => {
+  // use state variable monsters
+  const [monsters, setMonsters] = useState([]);
+
+  // use state variable search field
+  const [searchField, setSearchField] = useState(""); // [vlue, setVaule]
+
+  // use state variable filtered monsters
+  const [filteredMonsters, setfilteredMonsters] = useState(monsters);
+
+  // use effect set initial variable of monsters
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
       .then((res) => res.json())
       .then((res) => {
-        this.setState({ monsters: res });
+        setMonsters(res);
       });
-  }
+  }, []); // [Func; (it will run if dependency arr had change), arrOfDependency]
 
-  componentDidUpdate() {}
+  // use effect filter monsters
+  useEffect(() => {
+    const newFilteredMonsters = monsters.filter((monster) =>
+      monster.name.toLocaleLowerCase().includes(searchField)
+    );
+    setfilteredMonsters(newFilteredMonsters)
+  }, [monsters, searchField])
 
-  searchMonstersOnChange = (e) => {
-    const search = e.target.value.toLocaleLowerCase();
-    this.setState({ searchKey: search });
+  const searchMonstersOnChange = (e) => {
+    const searchFieldString = e.target.value.toLocaleLowerCase();
+    setSearchField(searchFieldString);
   };
 
-  removeMonsterOnClick(name, monsters) {
-    const newLists = monsters.filter((monster) => monster.name !== name);
-    this.setState({ monsters: newLists });
-  }
 
-  addMonstersOnClick(name, monsters) {
-    const newMonster = {
-      id: monsters[monsters.length - 1]["id"] + 1,
-      name: name,
-    };
-    this.setState({ monsters: [...monsters, newMonster] });
-  }
-
-  render() {
-    const { monsters, searchKey } = this.state;
-    const { searchMonstersOnChange } = this;
-
-    // check for searching key
-    let monsterShowCase = monsters;
-    if (searchKey != "") {
-      monsterShowCase = monsters.filter((monster) =>
-        monster.name.toLocaleLowerCase().includes(searchKey)
-      );
-    }
-
-    return (
-      <div>
-        {/* Add new monsters */}
-        <div>
-          <h1 className="app-title">
-          Monster Rolodex
-          </h1>
-          <input type="text"
-          className="monsters-search-box"
-           placeholder="Name" id="monsterName" />
-          <button
-            onClick={() => {
-              const name = document.getElementById("monsterName").value;
-              this.addMonstersOnClick(name, monsters);
-            }}
-          >
-            Add
-          </button>
-        </div>
-        {/* Search a monster */}
-        <SearchBox
-          className="monsters-search-box"
-          onChangeHandler={searchMonstersOnChange}
-          placeholder="Seatch monster"
-        />
-        {/* Show monster cards */}
-        <CardList monsters={monsterShowCase} />
-      </div>
-    );
-  }
-}
+  return (
+    <div className="App">
+      <h1 className="app-title">APP rendered</h1>
+      <SearchBox
+        className="monsters-search-box"
+        onChangeHandler={searchMonstersOnChange}
+        placeholder="Seatch monster"
+      />
+      <CardList monsters={filteredMonsters} />
+    </div>
+  );
+};
 
 export default App;
