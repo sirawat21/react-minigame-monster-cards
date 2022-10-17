@@ -10,7 +10,7 @@ const CardList = ({monsters}) => {
             id={id}
             name={name}
             email={email}
-            src={`https://robohash.org/${id}?set=set2`}
+            src={`https://robohash.org/${id}?set=set1&size=180x180`}
           />
         )
       )}
